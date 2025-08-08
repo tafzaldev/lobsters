@@ -15,7 +15,7 @@
           "type": "controller",
           "class": "MessagesController",
           "method": "show",
-          "line": 93,
+          "line": 94,
           "file": "app/controllers/messages_controller.rb",
           "rendered": {
             "name": "messages/show",
@@ -163,7 +163,7 @@
           "type": "controller",
           "class": "InvitationsController",
           "method": "index",
-          "line": 25,
+          "line": 26,
           "file": "app/controllers/invitations_controller.rb",
           "rendered": {
             "name": "invitations/index",
@@ -421,6 +421,29 @@
       "note": "inputs pass through strip_operators; has some injection tests"
     },
     {
+      "warning_type": "SQL Injection",
+      "warning_code": 0,
+      "fingerprint": "78f7ed0238827ff0aca97d425305cd635d0a17d55001a2afed0a820f562c121a",
+      "check_name": "SQL",
+      "message": "Possible SQL injection",
+      "file": "app/controllers/mod/mod_controller.rb",
+      "line": 14,
+      "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
+      "code": "query.where(\"#{query.model.table_name}.created_at >=\\n      (NOW() - INTERVAL #{time_interval((params[:period] or default_periods.first))[:dur]} #{time_interval((params[:period] or default_periods.first))[:intv].upcase})\")",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "Mod::ModController",
+        "method": "period"
+      },
+      "user_input": "params[:period]",
+      "confidence": "Medium",
+      "cwe_id": [
+        89
+      ],
+      "note": "IntervalHelper#time_interval is a security control"
+    },
+    {
       "warning_type": "Redirect",
       "warning_code": 18,
       "fingerprint": "96e34cf6470885983badaf971f120a8a403618859640b5c07811a81852fae0e7",
@@ -450,7 +473,7 @@
       "check_name": "SQL",
       "message": "Possible SQL injection",
       "file": "app/models/comment.rb",
-      "line": 346,
+      "line": 347,
       "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
       "code": "Comment.connection.execute(\"UPDATE comments SET\\n  score = (select coalesce(sum(vote), 0) from votes where comment_id = comments.id),\\n  flags = (select count(*) from votes where comment_id = comments.id and vote = -1),\\n  confidence = #{calculated_confidence},\\n  confidence_order = concat(lpad(char(65535 - floor(#{calculated_confidence} * 65535) using binary), 2, '\\x00'), char(id & 0xff using binary))\\nWHERE id = #{id.to_i}\\n\")",
       "render_path": null,
@@ -625,30 +648,7 @@
         89
       ],
       "note": "these are integers returned by other queries in the class"
-    },
-    {
-      "warning_type": "SQL Injection",
-      "warning_code": 0,
-      "fingerprint": "ef245f54fb14c5e16ce594dff50a2d8f52417f7c864c80c5234cf606eef41a5c",
-      "check_name": "SQL",
-      "message": "Possible SQL injection",
-      "file": "app/controllers/mod_controller.rb",
-      "line": 58,
-      "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
-      "code": "query.where(\"#{query.model.table_name}.created_at >=\\n      (NOW() - INTERVAL #{time_interval((params[:period] or default_periods.first))[:dur]} #{time_interval((params[:period] or default_periods.first))[:intv].upcase})\")",
-      "render_path": null,
-      "location": {
-        "type": "method",
-        "class": "ModController",
-        "method": "period"
-      },
-      "user_input": "params[:period]",
-      "confidence": "Medium",
-      "cwe_id": [
-        89
-      ],
-      "note": "IntervalHelper#time_interval is a security control"
     }
   ],
-  "brakeman_version": "7.0.2"
+  "brakeman_version": "7.1.0"
 }
